@@ -134,6 +134,15 @@ def parllelEFIM(nodeData):
     return output
 
 
+def output(itemsets, file):
+    with open(file, 'w') as f:
+        for itemset in itemsets:
+            f.write("itemset : " + str(itemset[1]))
+            f.write(" utility : " + str(itemset[0]))
+            f.write("\n")
+    f.close()
+
+    
 if __name__ == '__main__':
     # variables used in the algorithm
     APP_NAME = "PEFIM"
@@ -218,3 +227,4 @@ if __name__ == '__main__':
 
     # generated itemsets
     # print(itemsets)
+    output(itemsets, outfile)

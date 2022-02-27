@@ -1,6 +1,7 @@
 from functools import cmp_to_key
 from Transaction import Transaction
 
+
 class pEFIM():
     highUtilityItemsets = []
     candidateCount = 0
@@ -11,21 +12,21 @@ class pEFIM():
     temp = []
     for i in range(5000):
         temp.append(0)
-    
+
     def __init__(self, minUtility, itemsToExplore, itemsToKeep, transactions, newNamesToOldNames, oldNamesToNewNames):
         self.minUtil = minUtility
         self.itemsToExplore = itemsToExplore
         self.itemsToKeep = itemsToKeep
         self.transactions = transactions
         self.newNamesToOldNames = newNamesToOldNames
-        self.oldNamesToNewNames  = oldNamesToNewNames
-    
+        self.oldNamesToNewNames = oldNamesToNewNames
+
     def runAlgo(self):
         # now we will sort the transactions according to proposed total order on transaction
         self.sortDatabase(self.transactions)
         self.backtrackingEFIM(self.transactions, self.itemsToKeep, self.itemsToExplore, 0)
         return (1, self.highUtilityItemsets)
-    
+
     def backtrackingEFIM(self, transactionsOfP, itemsToKeep, itemsToExplore, prefixLength):
         self.candidateCount += len(itemsToExplore)
         for idx, e in enumerate(itemsToExplore):
@@ -64,7 +65,8 @@ class pEFIM():
                                     positionProjection += 1
                                 previousTransaction.prefixUtility += projectedTransaction.prefixUtility
                                 sumUtilities = previousTransaction.prefixUtility
-                                previousTransaction = Transaction(items, utilities, previousTransaction.transactionUtility + projectedTransaction.transactionUtility)
+                                previousTransaction = Transaction(items, utilities,
+                                                                  previousTransaction.transactionUtility + projectedTransaction.transactionUtility)
                                 previousTransaction.prefixUtility = sumUtilities
                             else:
                                 positionPrevious = 0
@@ -86,10 +88,10 @@ class pEFIM():
             if previousTransaction != transactionsOfP[0]:
                 transactionsPe.append(previousTransaction)
             self.temp[prefixLength] = self.newNamesToOldNames[e]
-            
+
             if utilityPe >= self.minUtil:
-                self.highUtilityItemsets.append((utilityPe , self.temp[:prefixLength + 1]))
-            
+                self.highUtilityItemsets.append((utilityPe, self.temp[:prefixLength + 1]))
+
             # caluclate the local utility and subtree utility
             self.useUtilityBinArraysToCalculateUpperBounds(transactionsPe, idx, itemsToKeep)
             newItemsToKeep = []
@@ -101,7 +103,7 @@ class pEFIM():
                     newItemsToKeep.append(itemk)
                 elif self.utilityBinArrayLU[itemk] >= self.minUtil:
                     newItemsToKeep.append(itemk)
-            
+
             if len(transactionsPe) != 0:
                 self.backtrackingEFIM(transactionsPe, newItemsToKeep, newItemsToExplore, prefixLength + 1)
 
@@ -131,7 +133,7 @@ class pEFIM():
                     self.utilityBinArraySU[item] += sumRemainingUtility + transaction.prefixUtility
                     self.utilityBinArrayLU[item] += transaction.transactionUtility + transaction.prefixUtility
                 i -= 1
-                
+
     def is_equal(self, transaction1, transaction2):
         length1 = len(transaction1.items) - transaction1.offset
         length2 = len(transaction2.items) - transaction2.offset
@@ -179,4 +181,3 @@ class pEFIM():
                 pos1 -= 1
                 pos2 -= 1
             return 0
-    
